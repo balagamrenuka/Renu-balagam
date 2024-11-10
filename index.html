@@ -77,11 +77,18 @@
         // Handle Sign Up
         document.getElementById('signup-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
 
-            // Simple email validation
+            // Name validation: letters and spaces only
+            const namePattern = /^[A-Za-z\s]+$/;
+            if (!namePattern.test(name)) {
+                alert('Please enter a valid name (letters and spaces only).');
+                return;
+            }
+
+            // Email validation
             const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
             if (!emailPattern.test(email)) {
                 alert('Please enter a valid email address.');
@@ -105,7 +112,7 @@
         // Handle Login
         document.getElementById('login-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
 
             // Check if the email and password match
