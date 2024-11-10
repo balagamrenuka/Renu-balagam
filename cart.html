@@ -51,6 +51,18 @@
             <h2>Checkout</h2>
             <form id="checkout-form" onsubmit="completeCheckout(event)">
                 <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="mobile">Mobile Number:</label>
+                    <input type="tel" id="mobile" name="mobile" required>
+                </div>
+                <div class="form-group">
                     <label for="quantity">Product Quantity (kg):</label>
                     <input type="number" id="quantity" name="quantity" min="1" required>
                 </div>
@@ -65,24 +77,23 @@
         <!-- Order Confirmation Section (hidden by default) -->
         <section id="order-status" class="order-status-section" style="display:none;">
             <h2>Order Confirmation</h2>
-            <p>Your order has been placed successfully! You will receive a confirmation email with the order details.</p>
-            <button onclick="window.location.href='home.html'">Back to Home</button>
+            <p>Your order has been placed successfully! and order conformation is sent to your email in a while Here are the details of your order:</p>
+            <p id="order-summary"></p>
+            <button onclick="goHome()">Back to Home</button>
         </section>
 
         <script>
-            // Function to display cart items
+            // Function to display the cart content
             function displayCart() {
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
                 let cartItemsDiv = document.getElementById('cart-items');
 
-                // If the cart is empty
                 if (cart.length === 0) {
                     cartItemsDiv.innerHTML = '<p>Your cart is empty!</p>';
                 } else {
                     let cartHTML = '<ul>';
                     let totalPrice = 0;
 
-                    // Loop through the cart and display each item with a remove button
                     cart.forEach((item, index) => {
                         cartHTML += `
                             <li>
@@ -98,59 +109,56 @@
                 }
             }
 
-            // Function to remove an item from the cart
+            // Function to remove items from the cart
             function removeFromCart(index) {
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                
-                // Remove item at the specified index
                 cart.splice(index, 1);
-                
-                // Update localStorage and redisplay cart items
                 localStorage.setItem('cart', JSON.stringify(cart));
                 displayCart();
             }
 
-            // Display cart items when the page loads
+            // Display the cart on page load
             window.onload = displayCart;
 
-            // Function to handle the "Proceed to Checkout" button
+            // Function to show checkout section
             function proceedToCheckout() {
-                // Hide the cart section and show the checkout section
                 document.getElementById('cart').style.display = 'none';
                 document.getElementById('checkout').style.display = 'block';
             }
 
-            // Function to complete the checkout
+            // Function to handle the order completion
             function completeCheckout(event) {
-                event.preventDefault(); // Prevent the form from submitting
+                event.preventDefault();
 
-                // Get checkout data
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const mobile = document.getElementById('mobile').value;
                 const quantity = document.getElementById('quantity').value;
                 const address = document.getElementById('address').value;
+                const items = JSON.parse(localStorage.getItem('cart')) || [];
 
-                // Simulate order placement by storing the checkout data in localStorage (optional)
-                const orderData = {
-                    quantity: quantity,
-                    address: address,
-                    items: JSON.parse(localStorage.getItem('cart')) || []
-                };
-                localStorage.setItem('orderData', JSON.stringify(orderData));
+                // Create the order summary
+                const orderSummary = `
+                    Name: ${name}<br>
+                    Email: ${email}<br>
+                    Mobile: ${mobile}<br>
+                    Address: ${address}<br>
+                    Product Ordered: ${items.map(item => `${item.name} (x${item.quantity})`).join(', ')}
+                `;
 
-                // Hide the checkout section and show the order confirmation
+                // Display the order confirmation
                 document.getElementById('checkout').style.display = 'none';
                 document.getElementById('order-status').style.display = 'block';
+                document.getElementById('order-summary').innerHTML = orderSummary;
 
-                // Clear the cart by removing it from localStorage
+                // Clear the cart after order completion
                 localStorage.removeItem('cart');
                 displayCart();
             }
 
-            function backToHome() {
-                // Clear the cart by removing it from localStorage
-                localStorage.removeItem('cart');
-                
-                // Redirect to the home page
-                window.location.href = 'home.html';
+            // Function to redirect back to the home page
+            function goHome() {
+                window.location.href = 'home.html'; // Redirects the user to the home page.
             }
         </script>
 </body>
